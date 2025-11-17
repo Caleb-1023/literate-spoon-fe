@@ -1,6 +1,6 @@
 "use client";
 
-import { MealPlan } from "@/lib/mealPlanTypes";
+import { MealPlan, DayMeals, Meal } from "@/lib/mealPlanTypes";
 import { cn } from "@/lib/utils";
 
 interface SelectedMealPlanProps {
@@ -109,7 +109,7 @@ function DayMealCard({ dayMeals }: { dayMeals: DayMeals }) {
   );
 }
 
-function MealItem({ meal, mealType }: { meal: any; mealType: string }) {
+function MealItem({ meal, mealType }: { meal: Meal; mealType: string }) {
   return (
     <div className="bg-background rounded-lg p-4 border border-border">
       <div className="flex items-start justify-between mb-2">
