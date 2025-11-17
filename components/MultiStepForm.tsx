@@ -69,7 +69,6 @@ export default function MultiStepForm() {
   };
 
   const onSubmit = (data: BioData) => {
-    alert("Form submitted successfully! Check the console for the payload.");
     // Final data aggregation - all fields combined
     const finalPayload: BioData = {
       // Step 1: Personal Information
@@ -89,6 +88,13 @@ export default function MultiStepForm() {
     //   recipeAndNutrientFeedback: data.recipeAndNutrientFeedback,
     };
 
+    // Save to localStorage for profile display
+    try {
+      localStorage.setItem("biodata", JSON.stringify(finalPayload));
+    } catch (error) {
+      console.error("Error saving to localStorage:", error);
+    }
+
     // Log the combined payload (replace with your API call)
     console.log("Final BioData Payload:", JSON.stringify(finalPayload, null, 2));
     
@@ -99,7 +105,7 @@ export default function MultiStepForm() {
     //   body: JSON.stringify(finalPayload),
     // });
 
-    alert("Form submitted successfully! Check the console for the payload.");
+    alert("Form submitted successfully! Your profile has been updated.");
   };
 
   // Progress indicator calculation
