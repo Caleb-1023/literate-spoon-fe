@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/purity */
 "use client";
 
@@ -122,6 +123,8 @@ export default function ChatbotPage() {
       const updatedBioData: BioData = {
         ...(bioData || {
           firstName: "",
+          email: "",
+          password: "",
           gender: "prefer not to say" as const,
           zipCode: "",
           weight: 0,
