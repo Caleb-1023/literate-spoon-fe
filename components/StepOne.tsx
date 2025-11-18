@@ -34,6 +34,40 @@ export default function StepOne({ register, errors }: StepOneProps) {
           )}
         </div>
 
+        {/* Email */}
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+            Email <span className="text-destructive">*</span>
+          </label>
+          <input
+            id="email"
+            type="email"
+            {...register("email")}
+            className="w-full px-4 py-2 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+            placeholder="Enter your email"
+          />
+          {errors.email && (
+            <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>
+          )}
+        </div>
+
+        {/* Password */}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
+            Password <span className="text-destructive">*</span>
+          </label>
+          <input
+            id="password"
+            type="password"
+            {...register("password")}
+            className="w-full px-4 py-2 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+            placeholder="Create a password"
+          />
+          {errors.password && (
+            <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>
+          )}
+        </div>
+
         {/* Gender */}
         <div>
           <label htmlFor="gender" className="block text-sm font-medium text-foreground mb-2">

@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { bioDataSchema, BioData, stepOneSchema, stepTwoSchema, stepThreeSchema } from "@/lib/types";
@@ -9,6 +12,7 @@ import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
 
 export default function MultiStepForm() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
 
@@ -17,6 +21,8 @@ export default function MultiStepForm() {
     mode: "onChange",
     defaultValues: {
       firstName: "",
+      email: "",
+      password: "",
       gender: undefined,
       zipCode: "",
       weight: undefined,
@@ -69,58 +75,97 @@ export default function MultiStepForm() {
   };
 
   const onSubmit = async (data: BioData) => {
-    // Final data aggregation - all fields combined
-    const finalPayload: BioData = {
-      // Step 1: Personal Information
+    // Aggregate form data and perform registration + profile update
+    const finalPayload = {
+      // profile fields
       firstName: data.firstName,
       gender: data.gender,
       zipCode: data.zipCode,
-      // Step 2: Physical Characteristics
-      weight: data.weight,
-      height: data.height,
+      weight_kg: data.weight,
+      height_cm: data.height,
       age: data.age,
-      dietaryRestrictions: data.dietaryRestrictions,
+      // Convert comma-separated dietaryRestrictions string to array of allergies
+      allergies: typeof data.dietaryRestrictions === "string" && data.dietaryRestrictions.length > 0
+        ? data.dietaryRestrictions.split(",").map((s) => s.trim()).filter(Boolean)
+        : [],
+      food_preferences: null,
+      diet_goals: data.dietHealthGoals,
       budgetConstraints: data.budgetConstraints,
-      // Step 3: Interpreted Data
-      dietHealthGoals: data.dietHealthGoals,
-    //   foodPreferences: data.foodPreferences,
-    //   physicalActivityLevel: data.physicalActivityLevel,
-    //   recipeAndNutrientFeedback: data.recipeAndNutrientFeedback,
-    };
+    } as const;
 
-    // Save to localStorage for profile display
     try {
-      // localStorage.setItem("biodata", JSON.stringify(finalPayload));
-      const response:any = await fetch("http://10.3.38.125:5001/api/recipes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const base = process.env.NEXT_PUBLIC_DUMMY_LINK || "http://localhost:5001";
+
+      // 1) Register user
+      const registerRes = await axios.post(
+        `${base}/api/auth/register`,
+        {
+          email: data.email,
+          password: data.password,
+          firstName: data.firstName,
+          gender: data.gender,
+          zipCode: data.zipCode,
         },
-        body: JSON.stringify({
-          height_cm: finalPayload.height,
-          weight_kg: finalPayload.weight,
-          allergies: finalPayload.dietaryRestrictions.split(","),
-          food_preferences: null,
-          diet_goals: finalPayload.dietHealthGoals,
-        }),
-      });
-      const data = await response.json();
-      console.log("Data:", data);
-    } catch (error) {
-      console.error("Error saving to localStorage:", error);
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      console.log("Register response (axios):", registerRes);
+      const registerJson: any = registerRes.data;
+      const token = registerJson.accessToken;
+
+      // 2) Use returned token to update the profile on the backend
+      const profileRes = await axios.put(
+        `${base}/api/profile`,
+        finalPayload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        }
+      );
+
+      console.log("Profile update response (axios):", profileRes);
+      const profileJson = profileRes.data;
+
+      // Persist biodata locally for existing UI components
+      try {
+        localStorage.setItem(
+          "biodata",
+          JSON.stringify({
+            firstName: data.firstName,
+            gender: data.gender,
+            zipCode: data.zipCode,
+            weight: data.weight,
+            height: data.height,
+            age: data.age,
+            dietaryRestrictions: data.dietaryRestrictions,
+            budgetConstraints: data.budgetConstraints,
+            dietHealthGoals: data.dietHealthGoals,
+          })
+        );
+      } catch (storageErr) {
+        console.warn("Failed to persist biodata locally:", storageErr);
+      }
+
+      // Store access token locally (note: consider httpOnly cookie for production)
+      if (token) {
+        try {
+          localStorage.setItem("accessToken", token);
+        } catch (storageErr) {
+          console.warn("Failed to persist accessToken:", storageErr);
+        }
+      }
+
+      console.log("Registration response:", registerJson);
+      console.log("Profile update response:", profileJson);
+
+      // Redirect to dashboard now that the user is registered and profile updated
+      router.push("/dashboard");
+    } catch (err: any) {
+      console.error(err);
+      alert(`Error: ${err.message || err}`);
     }
-
-    // Log the combined payload (replace with your API call)
-    console.log("Final BioData Payload:", JSON.stringify(finalPayload, null, 2));
-    
-    // Example: Send to API
-    // await fetch('/api/biodata', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(finalPayload),
-    // });
-
-    alert("Form submitted successfully! Your profile has been updated.");
   };
 
   // Progress indicator calculation

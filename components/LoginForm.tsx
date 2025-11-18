@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 import Link from "next/link";
 
 const loginSchema = z.object({
@@ -34,10 +35,26 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      console.log(data.email, data.password);
+      const base = process.env.NEXT_PUBLIC_DUMMY_LINK || "http://localhost:5001";
+      const res = await axios.post(`${base}/api/auth/login`, { email: data.email, password: data.password }, { headers: { "Content-Type": "application/json" } });
+      console.log("Login response (axios):", res);
+      const json: any = res.data;
+      const token = json.accessToken;
+
+      if (token) {
+        try {
+          console.log("Persisting accessToken to localStorage");
+          localStorage.setItem("accessToken", token);
+        } catch (err) {
+          console.warn("Failed to persist accessToken:", err);
+        }
+      }
+
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.message || "Failed to sign in. Please check your credentials.");
+      console.error("Login error (axios):", err);
+      const msg = err?.response?.data?.error || err?.message;
+      setError(msg || "Failed to sign in. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
@@ -46,8 +63,12 @@ export default function LoginForm() {
   return (
     <div className="w-full max-w-md mx-auto p-8">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h2>
-        <p className="text-muted-foreground">Sign in to your account to continue</p>
+        <h2 className="text-3xl font-bold text-foreground mb-2">
+          Welcome Back
+        </h2>
+        <p className="text-muted-foreground">
+          Sign in to your account to continue
+        </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -58,7 +79,10 @@ export default function LoginForm() {
         )}
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-foreground mb-2"
+          >
             Email Address
           </label>
           <input
@@ -69,12 +93,17 @@ export default function LoginForm() {
             placeholder="Enter your email"
           />
           {errors.email && (
-            <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>
+            <p className="mt-1 text-sm text-destructive">
+              {errors.email.message}
+            </p>
           )}
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-foreground mb-2"
+          >
             Password
           </label>
           <input
@@ -85,7 +114,9 @@ export default function LoginForm() {
             placeholder="Enter your password"
           />
           {errors.password && (
-            <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>
+            <p className="mt-1 text-sm text-destructive">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
@@ -96,7 +127,10 @@ export default function LoginForm() {
               type="checkbox"
               className="w-4 h-4 border-input rounded focus:ring-2 focus:ring-ring"
             />
-            <label htmlFor="remember" className="ml-2 text-sm text-muted-foreground">
+            <label
+              htmlFor="remember"
+              className="ml-2 text-sm text-muted-foreground"
+            >
               Remember me
             </label>
           </div>
@@ -118,7 +152,10 @@ export default function LoginForm() {
 
         <div className="text-center text-sm text-muted-foreground">
           Don't have an account?{" "}
-          <Link href="/register" className="text-green-800 hover:text-green-900 dark:text-green-600 dark:hover:text-green-500 font-medium">
+          <Link
+            href="/register"
+            className="text-green-800 hover:text-green-900 dark:text-green-600 dark:hover:text-green-500 font-medium"
+          >
             Sign up
           </Link>
         </div>
@@ -126,4 +163,3 @@ export default function LoginForm() {
     </div>
   );
 }
-

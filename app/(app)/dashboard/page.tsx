@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { BioData } from "@/lib/types";
 import { MealPlan } from "@/lib/mealPlanTypes";
 import QuickStats from "@/components/dashboard/QuickStats";
@@ -16,40 +19,74 @@ export default function DashboardPage() {
   const [favoriteRecipesCount, setFavoriteRecipesCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Fetch profile from backend using the stored access token
+  const fetchProfile = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) throw new Error("No access token available");
+
+    const base = process.env.NEXT_PUBLIC_DUMMY_LINK || "http://localhost:5001";
+    try {
+      const res = await axios.get(`${base}/api/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Fetched profile from server (axios):", res);
+      return res.data;
+    } catch (err: any) {
+      console.error("Profile fetch error (axios):", err);
+      const body = err?.response?.data || {};
+      throw new Error(body.error || body.message || `Profile fetch failed`);
+    }
+  };
+
+  const {
+    data: profileData,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useQuery({ queryKey: ["profile"], queryFn: fetchProfile });
+
   useEffect(() => {
-    const fetchDashboardData = () => {
+    // If we received profile data from the server, use it
+    if (profileData) {
+      // API may return profile directly or wrapped in { profile }
+      const profile = profileData.profile || profileData;
+      setBioData(profile as BioData);
+    }
+
+    // Fallback: if profile fetch failed or no token, try localStorage
+    if (
+      !profileData &&
+      (profileError || !localStorage.getItem("accessToken"))
+    ) {
       try {
-        // Load BioData
         const storedBioData = localStorage.getItem("biodata");
-        if (storedBioData) {
-          setBioData(JSON.parse(storedBioData) as BioData);
-        }
-
-        // Load current meal plan
-        const storedMealPlans = localStorage.getItem("mealPlans");
-        if (storedMealPlans) {
-          const plans = JSON.parse(storedMealPlans) as MealPlan[];
-          const currentPlan = plans.find((p) => p.isCurrent) || plans[0] || null;
-          setMealPlan(currentPlan);
-        }
-
-        // Load favorite recipes count
-        const storedFavorites = localStorage.getItem("recipeFavorites");
-        if (storedFavorites) {
-          const favorites = JSON.parse(storedFavorites) as string[];
-          setFavoriteRecipesCount(favorites.length);
-        }
-      } catch (error) {
-        console.error("Error loading dashboard data:", error);
-      } finally {
-        setLoading(false);
+        if (storedBioData) setBioData(JSON.parse(storedBioData) as BioData);
+      } catch (err) {
+        console.error("Error reading biodata from localStorage:", err);
       }
-    };
+    }
 
-    fetchDashboardData();
-  }, []);
+    // Load current meal plan from localStorage (still client-side)
+    try {
+      const storedMealPlans = localStorage.getItem("mealPlans");
+      if (storedMealPlans) {
+        const plans = JSON.parse(storedMealPlans) as MealPlan[];
+        const currentPlan = plans.find((p) => p.isCurrent) || plans[0] || null;
+        setMealPlan(currentPlan);
+      }
 
-  if (loading) {
+      const storedFavorites = localStorage.getItem("recipeFavorites");
+      if (storedFavorites) {
+        const favorites = JSON.parse(storedFavorites) as string[];
+        setFavoriteRecipesCount(favorites.length);
+      }
+    } catch (error) {
+      console.error("Error loading dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [profileData, profileError]);
+
+  if (profileLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
@@ -101,7 +138,9 @@ export default function DashboardPage() {
           >
             <div className="flex items-center space-x-3">
               <User className="w-5 h-5 text-green-800 dark:text-green-600" />
-              <span className="font-medium text-foreground">Update BioData</span>
+              <span className="font-medium text-foreground">
+                Update BioData
+              </span>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-green-800 dark:group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
           </Link>
@@ -112,7 +151,9 @@ export default function DashboardPage() {
           >
             <div className="flex items-center space-x-3">
               <Calendar className="w-5 h-5 text-green-800 dark:text-green-600" />
-              <span className="font-medium text-foreground">View Meal Plans</span>
+              <span className="font-medium text-foreground">
+                View Meal Plans
+              </span>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-green-800 dark:group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
           </Link>
@@ -123,7 +164,9 @@ export default function DashboardPage() {
           >
             <div className="flex items-center space-x-3">
               <ChefHat className="w-5 h-5 text-green-800 dark:text-green-600" />
-              <span className="font-medium text-foreground">Browse Recipes</span>
+              <span className="font-medium text-foreground">
+                Browse Recipes
+              </span>
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-green-800 dark:group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
           </Link>

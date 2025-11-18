@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -5,7 +6,7 @@ import SelectedMealPlan from "@/components/meal-plans/SelectedMealPlan";
 import MealPlanList from "@/components/meal-plans/MealPlanList";
 import { MealPlan } from "@/lib/mealPlanTypes";
 
-// Mock data generator - replace with API call
+// Mock data generator - used as the original local fallback
 const generateMockMealPlans = (): MealPlan[] => {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const meals = [
@@ -83,38 +84,30 @@ export default function MealPlansPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch meal plans - replace with actual API call
-    const fetchMealPlans = async () => {
-      try {
-        // Try to load from localStorage first
-        const stored = localStorage.getItem("mealPlans");
-        if (stored) {
-          const parsed = JSON.parse(stored) as MealPlan[];
-          setMealPlans(parsed);
-          // Set current plan as default selected
-          const currentPlan = parsed.find((p) => p.isCurrent);
-          setSelectedPlanId(currentPlan?.id || parsed[0]?.id || null);
-        } else {
-          // Use mock data
-          const mockPlans = generateMockMealPlans();
-          setMealPlans(mockPlans);
-          const currentPlan = mockPlans.find((p) => p.isCurrent);
-          setSelectedPlanId(currentPlan?.id || mockPlans[0]?.id || null);
-          // Save to localStorage
-          localStorage.setItem("mealPlans", JSON.stringify(mockPlans));
-        }
-      } catch (error) {
-        console.error("Error fetching meal plans:", error);
+    // Try to load meal plans from localStorage, otherwise generate mock plans
+    try {
+      const stored = localStorage.getItem("mealPlans");
+      if (stored) {
+        const parsed = JSON.parse(stored) as MealPlan[];
+        setMealPlans(parsed);
+        const currentPlan = parsed.find((p) => p.isCurrent);
+        setSelectedPlanId(currentPlan?.id || parsed[0]?.id || null);
+      } else {
         const mockPlans = generateMockMealPlans();
         setMealPlans(mockPlans);
         const currentPlan = mockPlans.find((p) => p.isCurrent);
         setSelectedPlanId(currentPlan?.id || mockPlans[0]?.id || null);
-      } finally {
-        setLoading(false);
+        localStorage.setItem("mealPlans", JSON.stringify(mockPlans));
       }
-    };
-
-    fetchMealPlans();
+    } catch (error) {
+      console.error("Error fetching meal plans:", error);
+      const mockPlans = generateMockMealPlans();
+      setMealPlans(mockPlans);
+      const currentPlan = mockPlans.find((p) => p.isCurrent);
+      setSelectedPlanId(currentPlan?.id || mockPlans[0]?.id || null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const selectedPlan = mealPlans.find((p) => p.id === selectedPlanId) || null;

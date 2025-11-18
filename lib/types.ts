@@ -3,6 +3,9 @@ import { z } from "zod";
 // Step 1 Schema
 export const stepOneSchema = z.object({
   firstName: z.string().min(1, "First name is required").max(50, "First name must be less than 50 characters"),
+  // Add email & password for registration during the biodata flow
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
   gender: z.enum(["male", "female", "non-binary", "prefer not to say"], {
     message: "Please select a gender option",
   }),
