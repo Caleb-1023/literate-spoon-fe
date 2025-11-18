@@ -122,6 +122,7 @@ export default function StepTwo({ register, errors }: StepTwoProps) {
           </label>
           <input
             id="budgetConstraints"
+            type="number"
             {...register("budgetConstraints")}
             className="w-full px-4 py-2 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
             placeholder="How much are you willing to spend on food and meals weekly?"

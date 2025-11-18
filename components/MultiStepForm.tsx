@@ -29,7 +29,7 @@ export default function MultiStepForm() {
       height: undefined,
       age: undefined,
       dietaryRestrictions: "",
-      budgetConstraints: "",
+      budgetConstraints: undefined,
       dietHealthGoals: "",
     //   foodPreferences: "",
     //   physicalActivityLevel: "",

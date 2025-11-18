@@ -76,13 +76,13 @@ export default function SelectedMealPlan({ mealPlan }: SelectedMealPlanProps) {
               </div>
             </div>
           )}
-          <button
+          {/* <button
             onClick={() => setGroceryListOpen(true)}
             className="flex items-center space-x-2 px-4 py-2 bg-green-800 text-white rounded-lg hover:bg-green-900 transition-colors text-sm font-medium"
           >
             <ShoppingCart className="w-4 h-4" />
             <span>Grocery List</span>
-          </button>
+          </button> */}
         </div>
       </div>
 

@@ -81,7 +81,7 @@ function MealPlanListItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2 mb-1">
             <h3 className="font-semibold text-sm truncate">{plan.name}</h3>
-              {plan.isCurrent && (
+              {/* {plan.isCurrent && (
                 <span
                   className={cn(
                     "px-2 py-0.5 text-xs font-medium rounded-full flex-shrink-0",
@@ -92,7 +92,7 @@ function MealPlanListItem({
                 >
                   Current
                 </span>
-              )}
+              )} */}
           </div>
           <p className="text-xs text-muted-foreground">
             {formatDate(plan.startDate)} - {formatDate(plan.endDate)}

@@ -49,6 +49,7 @@ export default function DashboardPage() {
     if (profileData) {
       // API may return profile directly or wrapped in { profile }
       const profile = profileData.profile || profileData;
+      localStorage.setItem("biodata", JSON.stringify(profile));
       setBioData(profile as BioData);
     }
 
