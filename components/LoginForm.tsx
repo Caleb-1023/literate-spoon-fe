@@ -33,7 +33,7 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      await signIn(data.email, data.password);
+      console.log(data.email, data.password);
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "Failed to sign in. Please check your credentials.");
