@@ -1,13 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { MealPlan, DayMeals, Meal } from "@/lib/mealPlanTypes";
 import { cn } from "@/lib/utils";
+import GroceryListModal from "./GroceryListModal";
+import { ShoppingCart } from "lucide-react";
 
 interface SelectedMealPlanProps {
   mealPlan: MealPlan | null;
 }
 
 export default function SelectedMealPlan({ mealPlan }: SelectedMealPlanProps) {
+  const [groceryListOpen, setGroceryListOpen] = useState(false);
+
   if (!mealPlan) {
     return (
       <div className="bg-card border border-border rounded-lg p-8 shadow-sm h-full flex items-center justify-center">
@@ -52,7 +57,7 @@ export default function SelectedMealPlan({ mealPlan }: SelectedMealPlanProps) {
             <div className="flex items-center space-x-2 mb-1">
               <h2 className="text-2xl font-bold text-foreground">{mealPlan.name}</h2>
               {mealPlan.isCurrent && (
-                <span className="px-2 py-1 text-xs font-medium bg-primary text-primary-foreground rounded-full">
+                <span className="px-2 py-1 text-xs font-medium bg-green-800 text-white rounded-full">
                   Current
                 </span>
               )}
@@ -62,15 +67,31 @@ export default function SelectedMealPlan({ mealPlan }: SelectedMealPlanProps) {
             </p>
           </div>
         </div>
-        {mealPlan.totalCalories && (
-          <div className="mt-4 flex items-center space-x-4 text-sm">
-            <div className="flex items-center space-x-2">
-              <span className="text-muted-foreground">Total Calories:</span>
-              <span className="font-semibold text-foreground">{mealPlan.totalCalories} kcal</span>
+        <div className="mt-4 flex items-center justify-between">
+          {mealPlan.totalCalories && (
+            <div className="flex items-center space-x-4 text-sm">
+              <div className="flex items-center space-x-2">
+                <span className="text-muted-foreground">Total Calories:</span>
+                <span className="font-semibold text-foreground">{mealPlan.totalCalories} kcal</span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+          <button
+            onClick={() => setGroceryListOpen(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-green-800 text-white rounded-lg hover:bg-green-900 transition-colors text-sm font-medium"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            <span>Grocery List</span>
+          </button>
+        </div>
       </div>
+
+      {/* Grocery List Modal */}
+      <GroceryListModal
+        mealPlan={mealPlan}
+        open={groceryListOpen}
+        onOpenChange={setGroceryListOpen}
+      />
 
       {/* Weekly Meal Plan */}
       <div className="flex-1 overflow-y-auto p-6">

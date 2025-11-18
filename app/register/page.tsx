@@ -35,7 +35,7 @@ export default function SignupForm() {
         />
 
         <input
-          className="border p-2 rounded"
+          className="border p-2 rounded"111112q
           placeholder="Password"
           type="password"
           value={password}

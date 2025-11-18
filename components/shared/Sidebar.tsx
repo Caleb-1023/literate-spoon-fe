@@ -83,7 +83,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           {/* Logo/Brand Area */}
           <div className="flex items-center justify-between h-16 px-6 border-b border-border">
             <Link href="/" className="flex items-center space-x-2">
-              <span className="text-xl font-bold text-foreground">Literate Spoon</span>
+              <span className="text-xl font-bold text-green-800 dark:text-green-600">Literate Spoon</span>
             </Link>
             <button
               onClick={onClose}
@@ -120,9 +120,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   }}
                   className={cn(
                     "flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-                    "hover:bg-accent hover:text-accent-foreground",
+                    "hover:bg-green-50 hover:text-green-800 dark:hover:bg-green-900/20 dark:hover:text-green-400",
                     isActive
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "bg-green-800 text-white shadow-sm dark:bg-green-700"
                       : "text-muted-foreground"
                   )}
                   aria-current={isActive ? "page" : undefined}

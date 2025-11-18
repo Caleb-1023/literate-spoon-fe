@@ -68,7 +68,7 @@ export default function MultiStepForm() {
     }
   };
 
-  const onSubmit = (data: BioData) => {
+  const onSubmit = async (data: BioData) => {
     // Final data aggregation - all fields combined
     const finalPayload: BioData = {
       // Step 1: Personal Information
@@ -90,7 +90,22 @@ export default function MultiStepForm() {
 
     // Save to localStorage for profile display
     try {
-      localStorage.setItem("biodata", JSON.stringify(finalPayload));
+      // localStorage.setItem("biodata", JSON.stringify(finalPayload));
+      const response:any = await fetch("http://10.3.38.125:5001/api/recipes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          height_cm: finalPayload.height,
+          weight_kg: finalPayload.weight,
+          allergies: finalPayload.dietaryRestrictions.split(","),
+          food_preferences: null,
+          diet_goals: finalPayload.dietHealthGoals,
+        }),
+      });
+      const data = await response.json();
+      console.log("Data:", data);
     } catch (error) {
       console.error("Error saving to localStorage:", error);
     }
@@ -125,7 +140,7 @@ export default function MultiStepForm() {
             </div>
             <div className="w-full bg-muted rounded-full h-2.5">
               <div
-                className="bg-primary h-2.5 rounded-full transition-all duration-300"
+                className="bg-green-800 h-2.5 rounded-full transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -156,14 +171,14 @@ export default function MultiStepForm() {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="px-6 py-2 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                  className="px-6 py-2 rounded-lg font-medium bg-green-800 text-white hover:bg-green-900 transition-colors"
                 >
                   Next
                 </button>
               ) : (
                 <button
                   type="submit"
-                  className="px-6 py-2 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                  className="px-6 py-2 rounded-lg font-medium bg-green-800 text-white hover:bg-green-900 transition-colors"
                 >
                   Submit
                 </button>

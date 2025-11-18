@@ -69,30 +69,30 @@ function MealPlanListItem({
   return (
     <button
       onClick={onClick}
-      className={cn(
-        "w-full text-left p-4 rounded-lg border transition-all",
-        "hover:bg-accent hover:border-accent-foreground/20",
-        isSelected
-          ? "bg-primary text-primary-foreground border-primary shadow-sm"
-          : "bg-background border-border text-foreground"
-      )}
+        className={cn(
+          "w-full text-left p-4 rounded-lg border transition-all",
+          "hover:bg-green-50 hover:border-green-200 dark:hover:bg-green-900/20 dark:hover:border-green-800",
+          isSelected
+            ? "bg-green-800 text-white border-green-800 shadow-sm dark:bg-green-700"
+            : "bg-background border-border text-foreground"
+        )}
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2 mb-1">
             <h3 className="font-semibold text-sm truncate">{plan.name}</h3>
-            {plan.isCurrent && (
-              <span
-                className={cn(
-                  "px-2 py-0.5 text-xs font-medium rounded-full flex-shrink-0",
-                  isSelected
-                    ? "bg-primary-foreground/20 text-primary-foreground"
-                    : "bg-primary text-primary-foreground"
-                )}
-              >
-                Current
-              </span>
-            )}
+              {plan.isCurrent && (
+                <span
+                  className={cn(
+                    "px-2 py-0.5 text-xs font-medium rounded-full flex-shrink-0",
+                    isSelected
+                      ? "bg-white/20 text-white"
+                      : "bg-green-800 text-white"
+                  )}
+                >
+                  Current
+                </span>
+              )}
           </div>
           <p className="text-xs text-muted-foreground">
             {formatDate(plan.startDate)} - {formatDate(plan.endDate)}

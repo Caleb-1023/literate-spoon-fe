@@ -100,10 +100,10 @@ export default function DashboardPage() {
             className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors group"
           >
             <div className="flex items-center space-x-3">
-              <User className="w-5 h-5 text-primary" />
+              <User className="w-5 h-5 text-green-800 dark:text-green-600" />
               <span className="font-medium text-foreground">Update BioData</span>
             </div>
-            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-green-800 dark:group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
           </Link>
 
           <Link
@@ -111,10 +111,10 @@ export default function DashboardPage() {
             className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors group"
           >
             <div className="flex items-center space-x-3">
-              <Calendar className="w-5 h-5 text-primary" />
+              <Calendar className="w-5 h-5 text-green-800 dark:text-green-600" />
               <span className="font-medium text-foreground">View Meal Plans</span>
             </div>
-            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-green-800 dark:group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
           </Link>
 
           <Link
@@ -122,10 +122,10 @@ export default function DashboardPage() {
             className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors group"
           >
             <div className="flex items-center space-x-3">
-              <ChefHat className="w-5 h-5 text-primary" />
+              <ChefHat className="w-5 h-5 text-green-800 dark:text-green-600" />
               <span className="font-medium text-foreground">Browse Recipes</span>
             </div>
-            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-green-800 dark:group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
           </Link>
         </div>
       </div>

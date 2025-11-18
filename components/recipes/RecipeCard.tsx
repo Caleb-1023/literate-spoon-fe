@@ -38,7 +38,7 @@ export default function RecipeCard({ recipe, onToggleFavorite }: RecipeCardProps
             className={cn(
               "absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-colors",
               recipe.isFavorite
-                ? "bg-primary text-primary-foreground"
+                ? "bg-green-800 text-white"
                 : "bg-black/30 text-white hover:bg-black/50"
             )}
             aria-label={recipe.isFavorite ? "Remove from favorites" : "Add to favorites"}
@@ -73,7 +73,7 @@ export default function RecipeCard({ recipe, onToggleFavorite }: RecipeCardProps
             className={cn(
               "absolute top-3 right-3 p-2 rounded-full bg-background/80 backdrop-blur-sm transition-colors",
               recipe.isFavorite
-                ? "bg-primary text-primary-foreground"
+                ? "bg-green-800 text-white"
                 : "bg-background/80 text-foreground hover:bg-background"
             )}
             aria-label={recipe.isFavorite ? "Remove from favorites" : "Add to favorites"}
@@ -91,7 +91,7 @@ export default function RecipeCard({ recipe, onToggleFavorite }: RecipeCardProps
       {/* Content */}
       <div className="p-5">
         <div className="flex items-start justify-between mb-2">
-          <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 flex-1">
+          <h3 className="text-lg font-semibold text-foreground group-hover:text-green-800 dark:group-hover:text-green-400 transition-colors line-clamp-2 flex-1">
             {recipe.name}
           </h3>
           <ExternalLink className="w-4 h-4 text-muted-foreground ml-2 flex-shrink-0" />

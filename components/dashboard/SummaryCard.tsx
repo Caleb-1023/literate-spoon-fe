@@ -27,7 +27,7 @@ export default function SummaryCard({
     <div className={cn("bg-card border border-border rounded-lg p-6 shadow-sm", className)}>
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
-          {icon && <div className="text-primary">{icon}</div>}
+          {icon && <div className="text-green-800 dark:text-green-600">{icon}</div>}
           <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
             {title}
           </h3>
@@ -35,7 +35,7 @@ export default function SummaryCard({
         {link && (
           <Link
             href={link}
-            className="text-xs text-primary hover:text-primary/80 font-medium"
+            className="text-xs text-green-800 hover:text-green-900 dark:text-green-600 dark:hover:text-green-500 font-medium"
             onClick={(e) => e.stopPropagation()}
           >
             {linkText} →
