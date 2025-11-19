@@ -35,7 +35,7 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const base = process.env.NEXT_PUBLIC_DUMMY_LINK || "http://localhost:5001";
+      const base = "http://128.164.114.67:5001";
       const res = await axios.post(`${base}/api/auth/login`, { email: data.email, password: data.password }, { headers: { "Content-Type": "application/json" } });
       console.log("Login response (axios):", res);
       const json: any = res.data;

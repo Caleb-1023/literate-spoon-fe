@@ -160,7 +160,7 @@ export default function MealPlansPage() {
   const generateMealPlan = async () => {
     const profileData = localStorage.getItem("biodata");
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_DUMMY_LINK}/api/meal-plans/generate`,
+      `http://128.164.114.67:5001/api/meal-plans/generate`,
       {
         ...JSON.parse(profileData || "{}"),
         foodPreferences: "",
@@ -183,7 +183,7 @@ export default function MealPlansPage() {
   const getGeneratedMealPlans = async () => {
     // const profileData = localStorage.getItem("biodata");
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_DUMMY_LINK}/api/meal-plans/generated`,
+      `http://128.164.114.67:5001/api/meal-plans/generated`,
       // {
       //   ...JSON.parse(profileData || "{}"),
       //   foodPreferences: "",
