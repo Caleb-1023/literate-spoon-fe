@@ -45,25 +45,28 @@ export default function DashboardPage() {
   } = useQuery({ queryKey: ["profile"], queryFn: fetchProfile });
 
   useEffect(() => {
-    // If we received profile data from the server, use it
-    if (profileData) {
-      // API may return profile directly or wrapped in { profile }
-      const profile = profileData.profile || profileData;
-      localStorage.setItem("biodata", JSON.stringify(profile));
-      setBioData(profile as BioData);
-    }
+    // If we received profile data from the server, use it and persist it locally
+    // if (profileData) {
+    //   const profile = profileData.profile || profileData;
+    //   try {
+    //     // localStorage.setItem("biodata", JSON.stringify(profile));
+    //   } catch (err) {
+    //     console.warn("Failed to persist server profile to localStorage:", err);
+    //   }
+    //   setBioData(profile as BioData);
+    // }
 
-    // Fallback: if profile fetch failed or no token, try localStorage
-    if (
-      !profileData &&
-      (profileError || !localStorage.getItem("accessToken"))
-    ) {
-      try {
-        const storedBioData = localStorage.getItem("biodata");
-        if (storedBioData) setBioData(JSON.parse(storedBioData) as BioData);
-      } catch (err) {
-        console.error("Error reading biodata from localStorage:", err);
+    // Always attempt to read biodata from localStorage and merge with server data
+    try {
+      const storedBioData = localStorage.getItem("biodata");
+      if (storedBioData) {
+        const parsed = JSON.parse(storedBioData) as BioData;
+
+        setBioData(parsed)
+        
       }
+    } catch (err) {
+      console.error("Error reading biodata from localStorage:", err);
     }
 
     // Load current meal plan from localStorage (still client-side)

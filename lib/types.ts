@@ -18,7 +18,7 @@ export const stepTwoSchema = z.object({
   height: z.number().min(1, "Height must be greater than 0").max(300, "Height must be less than 300"),
   age: z.number().min(1, "Age must be greater than 0").max(150, "Age must be less than 150"),
   dietaryRestrictions: z.string().min(1, "Dietary restrictions are required").max(500, "Dietary restrictions must be less than 500 characters"),
-  budgetConstraints: z.number().min(0, "Budget constraints cannot be negative").max(10000, "Budget constraints must be less than 10000"),
+  budgetConstraints: z.string().min(0, "Budget constraints cannot be negative").max(10000, "Budget constraints must be less than 10000"),
 });
 
 // Step 3 Schema

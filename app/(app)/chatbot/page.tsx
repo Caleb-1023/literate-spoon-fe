@@ -120,26 +120,26 @@ export default function ChatbotPage() {
       }
 
       // Update BioData
-      const updatedBioData: BioData = {
-        ...(bioData || {
-          firstName: "",
-          email: "",
-          password: "",
-          gender: "prefer not to say" as const,
-          zipCode: "",
-          weight: 0,
-          height: 0,
-          age: 0,
-          dietaryRestrictions: "",
-          budgetConstraints: "",
-          dietHealthGoals: "",
-        }),
-        ...updates,
-      };
+      // const updatedBioData: BioData = {
+      //   ...(bioData || {
+      //     firstName: "",
+      //     email: "",
+      //     password: "",
+      //     gender: "prefer not to say" as const,
+      //     zipCode: "",
+      //     weight: 0,
+      //     height: 0,
+      //     age: 0,
+      //     dietaryRestrictions: "",
+      //     budgetConstraints: "",
+      //     dietHealthGoals: "",
+      //   }),
+      //   ...updates,
+      // };
 
-      // Save to localStorage
-      localStorage.setItem("biodata", JSON.stringify(updatedBioData));
-      setBioData(updatedBioData);
+      // // Save to localStorage
+      // localStorage.setItem("biodata", JSON.stringify(updatedBioData));
+      // setBioData(updatedBioData);
 
       // Generate response
       const fieldNames = updatedFields.map((field) => {

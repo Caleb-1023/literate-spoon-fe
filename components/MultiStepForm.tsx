@@ -29,7 +29,7 @@ export default function MultiStepForm() {
       height: undefined,
       age: undefined,
       dietaryRestrictions: "",
-      budgetConstraints: undefined,
+      budgetConstraints: "",
       dietHealthGoals: "",
     //   foodPreferences: "",
     //   physicalActivityLevel: "",
@@ -93,10 +93,12 @@ export default function MultiStepForm() {
       budgetConstraints: data.budgetConstraints,
     } as const;
 
-    try {
-      const base = process.env.NEXT_PUBLIC_DUMMY_LINK || "http://localhost:5001";
+    // Attempt server registration/profile update, but always persist locally and continue
+    const base = process.env.NEXT_PUBLIC_DUMMY_LINK || "http://localhost:5001";
+    let token: string | undefined = undefined;
 
-      // 1) Register user
+    try {
+      // 1) Register user (best-effort)
       const registerRes = await axios.post(
         `${base}/api/auth/register`,
         {
@@ -111,61 +113,63 @@ export default function MultiStepForm() {
 
       console.log("Register response (axios):", registerRes);
       const registerJson: any = registerRes.data;
-      const token = registerJson.accessToken;
+      token = registerJson?.accessToken;
 
-      // 2) Use returned token to update the profile on the backend
-      const profileRes = await axios.put(
-        `${base}/api/profile`,
-        finalPayload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        }
-      );
-
-      console.log("Profile update response (axios):", profileRes);
-      const profileJson = profileRes.data;
-
-      // Persist biodata locally for existing UI components
-      try {
-        localStorage.setItem(
-          "biodata",
-          JSON.stringify({
-            firstName: data.firstName,
-            gender: data.gender,
-            zipCode: data.zipCode,
-            weight: data.weight,
-            height: data.height,
-            age: data.age,
-            dietaryRestrictions: data.dietaryRestrictions,
-            budgetConstraints: data.budgetConstraints,
-            dietHealthGoals: data.dietHealthGoals,
-          })
-        );
-      } catch (storageErr) {
-        console.warn("Failed to persist biodata locally:", storageErr);
-      }
-
-      // Store access token locally (note: consider httpOnly cookie for production)
+      // 2) If we got a token, attempt to update the profile on the backend
       if (token) {
         try {
-          localStorage.setItem("accessToken", token);
-        } catch (storageErr) {
-          console.warn("Failed to persist accessToken:", storageErr);
+          const profileRes = await axios.put(
+            `${base}/api/profile`,
+            finalPayload,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log("Profile update response (axios):", profileRes);
+        } catch (profileErr) {
+          console.warn("Profile update failed, continuing with local persistence:", profileErr);
         }
       }
-
-      console.log("Registration response:", registerJson);
-      console.log("Profile update response:", profileJson);
-
-      // Redirect to dashboard now that the user is registered and profile updated
-      router.push("/dashboard");
-    } catch (err: any) {
-      console.error(err);
-      alert(`Error: ${err.message || err}`);
+    } catch (err) {
+      // Network/server error — fall back to local-only registration
+      console.warn("Registration request failed, saving locally instead:", err);
     }
+
+    // Persist biodata locally for UI and dashboard to consume
+    try {
+      localStorage.setItem(
+        "biodata",
+        JSON.stringify({
+          firstName: data.firstName,
+          gender: data.gender,
+          zipCode: data.zipCode,
+          weight: data.weight,
+          height: data.height,
+          age: data.age,
+          dietaryRestrictions: data.dietaryRestrictions,
+          budgetConstraints: data.budgetConstraints,
+          dietHealthGoals: data.dietHealthGoals,
+          email: data.email,
+        })
+      );
+    } catch (storageErr) {
+      console.warn("Failed to persist biodata locally:", storageErr);
+    }
+
+    // Persist access token if available
+    if (token) {
+      try {
+        localStorage.setItem("accessToken", token);
+      } catch (storageErr) {
+        console.warn("Failed to persist accessToken:", storageErr);
+      }
+    }
+
+    // Navigate to dashboard regardless of server success — dashboard will read local data
+    router.push("/dashboard");
   };
 
   // Progress indicator calculation

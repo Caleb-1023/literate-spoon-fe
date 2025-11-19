@@ -20,7 +20,7 @@ export default function StepOne({ register, errors }: StepOneProps) {
         {/* First Name */}
         <div>
           <label htmlFor="firstName" className="block text-sm font-medium text-foreground mb-2">
-            First Name <span className="text-destructive">*</span>
+            Name <span className="text-destructive">*</span>
           </label>
           <input
             id="firstName"
